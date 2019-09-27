@@ -1,15 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Product
 from django.utils import timezone
 # Create your views here.
 
 def home(request):
-    context={
-        
-    }
-    return render(request, 'products/home.html', context)
-
+    products = Product.objects
+    return render(request, 'products/home.html', {'products':products})
 
 @login_required
 def create(request):
@@ -27,23 +24,34 @@ def create(request):
             product.publishing_date = timezone.datetime.now()
             product.author = request.user
             product.save()
-            return redirect('home')
+            return redirect('/products/' + str(product.id))
         else:
             return render(request, 'products/create.html', {'error': 'All fields are required'})
 
     return render(request, 'products/create.html')
 
 @login_required
-def remove(request):
-    context={
-        
-    }
-    return render(request, 'products/remove.html', context)
+def remove(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if product.DoesNotExist:
+        return redirect('home')
+    else:
+        pass
+    return render(request, 'products/remove.html')
 
 
-def details(request):
+def details(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
     context={
-        
+        'product': product
     }
     return render(request, 'products/details.html', context)
+
+@login_required(login_url="/accounts/signup")
+def upvote(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, pk=product_id)
+        product.votes += 1
+        product.save()
+        return redirect('/products/' + str(product_id))
 

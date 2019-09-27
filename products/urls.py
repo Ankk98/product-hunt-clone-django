@@ -21,6 +21,8 @@ from . import views
 # app_name = 'accounts'
 urlpatterns = [
     path('create/', views.create, name='create'),
-    path('<int: i>/remove/', views.remove, name='remove'),
-    path('<int: i>/details/', views.details, name='details'),
+    path('<int:product_id>/remove/', views.remove, name='remove'),
+    path('<int:product_id>/', views.details, name='details'),
+    path('<int:product_id>/upvote', views.upvote, name='upvote'),
+
 ]
