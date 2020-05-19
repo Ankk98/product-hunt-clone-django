@@ -8,6 +8,9 @@ def home(request):
     products = Product.objects
     return render(request, 'products/home.html', {'products':products})
 
+def root(request):
+    return redirect('home')
+
 @login_required
 def create(request):
     if request.method == 'POST':
